@@ -4,7 +4,7 @@ function verifyToken(req, res, next){
     const authHeader=req.headers.token;
     if(authHeader){
         const token=authHeader
-        jwt.verify(token, process.env.JWT_SECRET, (err, user)=>{
+        jwt.verify(token, process.env.JWT_KEY, (err, user)=>{
             if(err) res.status(403).json("Token is not valid");
             req.user=user;
             next();

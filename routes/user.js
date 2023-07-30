@@ -13,7 +13,7 @@ router.put("/update/:id", verifyTokenAndAuthorization, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJs.AES.encrypt(
       req.body.password,
-      process.env.secretKey
+      process.env.PASS_SEC
     ).toString();
   }
 
@@ -55,13 +55,16 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
 
 //GET ALL USER
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
-    try {
-      const user = await User.find();
-      res.status(200).json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
+  const query = req.query.new;
+  try {
+    const users = query
+      ? await User.find().sort({ _id: -1 }).limit(5)
+      : await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 //get user stats
 router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
